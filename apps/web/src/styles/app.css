@@ -1,0 +1,378 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/outfit';
+
+@custom-variant fine (@media (hover: hover) and (pointer: fine));
+@custom-variant coarse (@media (hover: none), (pointer: coarse));
+
+@theme inline {
+    --font-sans: 'Outfit Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --color-bg: var(--bg);
+    --color-surface: var(--surface);
+    --color-ink: var(--ink);
+    --color-muted: var(--muted);
+    --color-line: var(--line);
+    --color-accent: var(--accent);
+    --color-accent-ink: var(--accent-ink);
+    --color-raised: var(--raised);
+    --color-tint: var(--tint);
+    --color-selected: var(--selected);
+    --color-selected-ink: var(--selected-ink);
+    --color-danger: var(--danger);
+    --color-danger-ink: var(--danger-ink);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Palette: "Sheet and biro" in light, "Night and sky blue" in dark. One accent, the rest neutral.
+   `light-dark()` picks by `color-scheme`, which follows the device unless the user chose a theme. */
+:root {
+    color-scheme: light dark;
+    --bg: light-dark(#ffffff, #0a0d14);
+    --surface: light-dark(#f4f4f4, #131824);
+    /* Dialogs and sheets. In dark they sit one step above the page so they read as a layer. */
+    --raised: light-dark(#ffffff, #131824);
+    --ink: light-dark(#111111, #e9edf3);
+    --muted: light-dark(#5f5f5f, #98a1b1);
+    --accent: light-dark(#1a4be0, #5ab9fc);
+    --accent-ink: light-dark(#ffffff, #0a0d14);
+    /* The chosen filter or theme. Inverse in light; a raised surface in dark, where a white block glares. */
+    --selected: light-dark(#111111, #283349);
+    --selected-ink: light-dark(#ffffff, #f2f5fa);
+    --danger: light-dark(#b3261e, #ff9b91);
+    --danger-ink: light-dark(#ffffff, #0a0d14);
+    --line: color-mix(in oklab, var(--ink) 14%, transparent);
+    /* The option under the pointer or the keyboard cursor. */
+    --tint: color-mix(in oklab, var(--ink) 9%, transparent);
+    --control: 2.75rem;
+    --bar: calc(4.5rem + env(safe-area-inset-bottom));
+}
+
+:root[data-theme='light'] {
+    color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+    color-scheme: dark;
+}
+
+@media (prefers-contrast: more) {
+    :root {
+        --muted: var(--ink);
+        --line: var(--ink);
+    }
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        scroll-padding-top: 5rem;
+    }
+
+    body {
+        min-height: 100dvh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* No double-tap zoom delay on anything tappable. */
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    label,
+    summary {
+        touch-action: manipulation;
+    }
+
+    button,
+    [role='button'],
+    a {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    /* 16px minimum stops iOS from zooming the page when a field takes focus. */
+    input,
+    select,
+    textarea {
+        font: inherit;
+        font-size: max(1rem, 16px);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+
+    ::selection {
+        background: color-mix(in oklab, var(--accent) 25%, transparent);
+    }
+}
+
+@layer components {
+    .wrap {
+        width: 100%;
+        max-width: 72rem;
+        margin-inline: auto;
+        padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+    }
+
+    @media (min-width: 40rem) {
+        .wrap {
+            padding-inline: max(2rem, env(safe-area-inset-left))
+                max(2rem, env(safe-area-inset-right));
+        }
+    }
+
+    .control {
+        width: 100%;
+        min-height: var(--control);
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        background: var(--bg);
+        color: var(--ink);
+        transition: border-color 120ms;
+    }
+
+    .control:hover {
+        border-color: var(--muted);
+    }
+
+    .control[aria-invalid='true'] {
+        border-color: var(--danger);
+        border-width: 2px;
+    }
+
+    /* The dropdown's list. It is a popover, so it sits in the top layer above dialogs.
+       Anchored to its trigger from 40rem up; a bottom sheet on phones. */
+    .dropdown-panel {
+        position: fixed;
+        inset: auto;
+        top: var(--dropdown-top, 0);
+        left: var(--dropdown-left, 0);
+        min-width: var(--dropdown-width, 12rem);
+        max-width: calc(100vw - 2rem);
+        max-height: min(20rem, 60dvh);
+        margin: 0;
+        padding: 0.25rem;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--raised);
+        color: var(--ink);
+        box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.35);
+    }
+
+    @media (max-width: 39.99rem) {
+        .dropdown-panel {
+            inset: auto 0 0 0;
+            width: 100%;
+            max-width: 100%;
+            max-height: 70dvh;
+            padding: 0.5rem 0.5rem max(0.75rem, env(safe-area-inset-bottom));
+            border-bottom: 0;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .dropdown-panel::backdrop {
+            background: color-mix(in oklab, #000 45%, transparent);
+        }
+    }
+
+    .check {
+        appearance: none;
+        display: grid;
+        place-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: 0;
+        border: 2px solid var(--muted);
+        border-radius: 999px;
+        cursor: pointer;
+        transition:
+            background-color 150ms,
+            border-color 150ms,
+            scale 150ms;
+    }
+
+    .check:active {
+        scale: 0.88;
+    }
+
+    .check:checked {
+        border-color: var(--accent);
+        background-color: var(--accent);
+    }
+
+    .check:checked::before {
+        content: '';
+        width: 0.875rem;
+        height: 0.875rem;
+        background: var(--accent-ink);
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5L19.5 7'/%3E%3C/svg%3E")
+            center / contain no-repeat;
+    }
+
+    /* High-contrast themes draw their own checkbox. */
+    @media (forced-colors: active) {
+        .check {
+            appearance: auto;
+        }
+
+        .check:checked::before {
+            content: none;
+        }
+    }
+
+    /* Swipe a row sideways on touch screens to reveal its actions. Native scrolling does the work. */
+    .swipe-row {
+        display: flex;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .swipe-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .swipe-row > * {
+        scroll-snap-align: start;
+    }
+
+    .swipe-row > :first-child {
+        flex: 0 0 100%;
+        min-width: 0;
+    }
+
+    .swipe-row > :last-child {
+        scroll-snap-align: end;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .swipe-row {
+            overflow: visible;
+            scroll-snap-type: none;
+        }
+
+        .swipe-row > :first-child {
+            flex: 1 1 0;
+        }
+    }
+
+    /* Bottom sheet on phones, centred dialog from 40rem up. */
+    .sheet {
+        width: 100%;
+        max-width: 100%;
+        max-height: 92dvh;
+        margin: auto 0 0;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-bottom: 0;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        background: var(--raised);
+        color: var(--ink);
+        overscroll-behavior: contain;
+        opacity: 0;
+        translate: 0 2rem;
+        transition:
+            opacity 200ms var(--ease-out-soft),
+            translate 260ms var(--ease-out-soft),
+            overlay 260ms allow-discrete,
+            display 260ms allow-discrete;
+    }
+
+    /* `none`, not `0 0`: any translate value would make the sheet the positioning box for the
+       fixed toasts rendered inside it, and they would cover its title. */
+    .sheet[open] {
+        opacity: 1;
+        translate: none;
+    }
+
+    @starting-style {
+        .sheet[open] {
+            opacity: 0;
+            translate: 0 2rem;
+        }
+    }
+
+    .sheet::backdrop {
+        background: color-mix(in oklab, #000 45%, transparent);
+        opacity: 0;
+        transition:
+            opacity 200ms,
+            overlay 260ms allow-discrete,
+            display 260ms allow-discrete;
+    }
+
+    .sheet[open]::backdrop {
+        opacity: 1;
+    }
+
+    @starting-style {
+        .sheet[open]::backdrop {
+            opacity: 0;
+        }
+    }
+
+    @media (min-width: 40rem) {
+        .sheet {
+            width: min(34rem, calc(100% - 4rem));
+            margin: auto;
+            border-bottom: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            translate: 0 0.75rem;
+        }
+
+        @starting-style {
+            .sheet[open] {
+                translate: 0 0.75rem;
+            }
+        }
+    }
+
+    /* Foldables held open like a book: filters on the left screen, the list on the right. */
+    @media (horizontal-viewport-segments: 2) {
+        .wrap {
+            max-width: none;
+            padding-inline: 0;
+        }
+
+        .board {
+            grid-template-columns:
+                env(viewport-segment-width 0 0, 50%)
+                env(viewport-segment-width 1 0, 50%);
+            column-gap: calc(
+                env(viewport-segment-left 1 0, 50%) - env(viewport-segment-right 0 0, 50%)
+            );
+        }
+
+        .board > * {
+            padding-inline: 1.5rem;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

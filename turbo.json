@@ -1,25 +1,25 @@
 {
-  "$schema": "https://turborepo.com/schema.json",
-  "tasks": {
-    "db:generate": {
-      "inputs": ["prisma/schema.prisma", "prisma.config.ts"],
-      "outputs": ["src/generated/**"]
-    },
-    "build": {
-      "dependsOn": ["^build", "db:generate"],
-      "outputs": ["dist/**"]
-    },
-    "check-types": {
-      "dependsOn": ["^check-types", "db:generate"]
-    },
-    "test": {
-      "dependsOn": ["db:generate"]
-    },
-    "lint": {},
-    "dev": {
-      "dependsOn": ["db:generate"],
-      "cache": false,
-      "persistent": true
+    "$schema": "https://turborepo.com/schema.json",
+    "tasks": {
+        "db:generate": {
+            "inputs": ["prisma/schema.prisma", "prisma.config.ts"],
+            "outputs": ["src/generated/**"]
+        },
+        "build": {
+            "dependsOn": ["^build", "db:generate"],
+            "outputs": ["dist/**", ".output/**"]
+        },
+        "check-types": {
+            "dependsOn": ["^check-types", "db:generate"]
+        },
+        "test": {
+            "dependsOn": ["db:generate"]
+        },
+        "lint": {},
+        "dev": {
+            "dependsOn": ["db:generate"],
+            "cache": false,
+            "persistent": true
+        }
     }
-  }
 }

@@ -1,10 +1,10 @@
 import type { z } from 'zod';
 import type { Task } from '../generated/prisma/client.js';
 import type {
-  createTaskSchema,
-  listTasksQuerySchema,
-  taskIdParamsSchema,
-  updateTaskSchema,
+    createTaskSchema,
+    listTasksQuerySchema,
+    taskIdParamsSchema,
+    updateTaskSchema,
 } from '../validators/tasks.validator.js';
 
 export type { Task };

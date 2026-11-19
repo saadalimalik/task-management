@@ -7,3 +7,6 @@
 .git
 .claude
 CLAUDE.md
+**/.output
+**/.nitro
+**/.tanstack

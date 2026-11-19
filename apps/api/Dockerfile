@@ -2,6 +2,8 @@
 FROM node:24.22.3-bookworm-slim AS base
 RUN npm install --global pnpm@12.21.0
 WORKDIR /repo
+# No git hooks inside the image.
+ENV HUSKY=0
 
 FROM base AS build
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./

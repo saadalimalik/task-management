@@ -14,6 +14,7 @@ import { tasksRouter } from './routes/tasks.route.js';
 
 const app = express();
 
+app.set('trust proxy', env.TRUST_PROXY);
 app.use(helmet());
 app.use(cors({ origin: env.CORS_ORIGIN === '*' ? '*' : env.CORS_ORIGIN.split(',') }));
 app.use(express.json({ limit: '100kb' }));
@@ -28,15 +29,15 @@ app.use(notFound);
 app.use(errorHandler);
 
 const server = app.listen(env.PORT, () => {
-  logger.info(`API listening on port ${env.PORT}`);
+    logger.info(`API listening on port ${env.PORT}`);
 });
 
 const shutdown = (signal: string) => {
-  logger.info(`${signal} received, shutting down`);
-  server.close(async () => {
-    await prisma.$disconnect();
-    process.exit(0);
-  });
+    logger.info(`${signal} received, shutting down`);
+    server.close(async () => {
+        await prisma.$disconnect();
+        process.exit(0);
+    });
 };
 
 process.on('SIGTERM', () => shutdown('SIGTERM'));

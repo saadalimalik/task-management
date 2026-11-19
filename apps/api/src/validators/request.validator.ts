@@ -8,22 +8,22 @@ const REQUEST_PARTS = ['params', 'query', 'body'] as const;
 
 // Parsed values land on res.locals[part]; express 5 exposes req.query as read-only.
 export const validateRequest =
-  (schemas: RequestSchemas): RequestHandler =>
-  (req, res, next) => {
-    for (const part of REQUEST_PARTS) {
-      const schema = schemas[part];
-      if (!schema) continue;
+    (schemas: RequestSchemas): RequestHandler =>
+    (req, res, next) => {
+        for (const part of REQUEST_PARTS) {
+            const schema = schemas[part];
+            if (!schema) continue;
 
-      const result = schema.safeParse(req[part]);
-      if (!result.success) {
-        const details = result.error.issues.map((issue) => ({
-          path: issue.path.join('.'),
-          message: issue.message,
-        }));
-        next(httpError(400, `Invalid request ${part}`, details));
-        return;
-      }
-      res.locals[part] = result.data;
-    }
-    next();
-  };
+            const result = schema.safeParse(req[part]);
+            if (!result.success) {
+                const details = result.error.issues.map((issue) => ({
+                    path: issue.path.join('.'),
+                    message: issue.message,
+                }));
+                next(httpError(400, `Invalid request ${part}`, details));
+                return;
+            }
+            res.locals[part] = result.data;
+        }
+        next();
+    };

@@ -1,7 +1,7 @@
 {
-  "name": "@repo/prettier-config",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": "./index.js"
+    "name": "@repo/prettier-config",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": "./index.js"
 }

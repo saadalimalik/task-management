@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import * as tasksController from '../controllers/tasks.controller.js';
 import {
-  validateCreateTask,
-  validateDeleteTask,
-  validateGetTask,
-  validateListTasks,
-  validateUpdateTask,
+    validateCreateTask,
+    validateDeleteTask,
+    validateGetTask,
+    validateListTasks,
+    validateUpdateTask,
 } from '../validators/tasks.validator.js';
 
 export const tasksRouter: Router = Router();

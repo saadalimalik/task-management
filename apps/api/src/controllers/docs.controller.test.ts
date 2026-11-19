@@ -4,11 +4,11 @@ import { openApiDocument } from '../lib/openapi.js';
 import { getOpenApiDocument } from './docs.controller.js';
 
 describe('getOpenApiDocument', () => {
-  it('responds with the OpenAPI document', () => {
-    const res = { json: vi.fn() };
+    it('responds with the OpenAPI document', () => {
+        const res = { json: vi.fn() };
 
-    getOpenApiDocument({} as Request, res as unknown as Response, vi.fn());
+        getOpenApiDocument({} as Request, res as unknown as Response, vi.fn());
 
-    expect(res.json).toHaveBeenCalledWith(openApiDocument);
-  });
+        expect(res.json).toHaveBeenCalledWith(openApiDocument);
+    });
 });

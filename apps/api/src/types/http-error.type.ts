@@ -1,4 +1,4 @@
 export type HttpError = Error & {
-  status: number;
-  details?: unknown;
+    status: number;
+    details?: unknown;
 };
