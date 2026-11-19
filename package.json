@@ -1,0 +1,23 @@
+{
+  "name": "task-management",
+  "private": true,
+  "packageManager": "pnpm@12.21.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "check-types": "turbo run check-types",
+    "up": "docker compose up --build --detach",
+    "down": "docker compose down",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@repo/prettier-config": "workspace:*",
+    "prettier": "3.10.1",
+    "turbo": "2.11.12",
+    "typescript": "7.0.2"
+  },
+  "prettier": "@repo/prettier-config"
+}

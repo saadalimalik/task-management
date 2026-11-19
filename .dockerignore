@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/.turbo
+**/src/generated
+**/.env
+**/.env.*
+.git
+.claude
+CLAUDE.md
