@@ -7,9 +7,16 @@ type ApiRequestOptions = {
     method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
     query?: Record<string, string | number | undefined>;
     body?: unknown;
-    // Address of the browser that made the request, so the API can rate-limit per user.
+    // Socket address of the browser that made the request, so the API can rate-limit per user.
     clientIp?: string;
 };
+
+// The API believes the address only together with the shared secret, so neither header is
+// sent unless both are known. Never forward a header the browser supplied.
+const proxyHeaders = (clientIp: string | undefined): Record<string, string> =>
+    clientIp && env.INTERNAL_PROXY_SECRET
+        ? { 'x-client-ip': clientIp, 'x-proxy-secret': env.INTERNAL_PROXY_SECRET }
+        : {};
 
 export const apiRequest = async <T>(
     path: string,
@@ -27,7 +34,7 @@ export const apiRequest = async <T>(
             headers: {
                 accept: 'application/json',
                 ...(body === undefined ? {} : { 'content-type': 'application/json' }),
-                ...(clientIp ? { 'x-forwarded-for': clientIp } : {}),
+                ...proxyHeaders(clientIp),
             },
             body: body === undefined ? undefined : JSON.stringify(body),
             signal: AbortSignal.timeout(TIMEOUT_MS),

@@ -28,4 +28,20 @@ describe('parseEnv', () => {
     it('throws on an unknown NODE_ENV', () => {
         expect(() => parseEnv({ DATABASE_URL, NODE_ENV: 'staging' })).toThrow(/NODE_ENV/);
     });
+
+    it('reads the proxy secret and treats an empty one as unset', () => {
+        const secret = 'x'.repeat(32);
+        expect(
+            parseEnv({ DATABASE_URL, INTERNAL_PROXY_SECRET: secret }).INTERNAL_PROXY_SECRET,
+        ).toBe(secret);
+        expect(
+            parseEnv({ DATABASE_URL, INTERNAL_PROXY_SECRET: '' }).INTERNAL_PROXY_SECRET,
+        ).toBeUndefined();
+    });
+
+    it('rejects a proxy secret that is too short to be safe', () => {
+        expect(() => parseEnv({ DATABASE_URL, INTERNAL_PROXY_SECRET: 'short' })).toThrow(
+            /INTERNAL_PROXY_SECRET/,
+        );
+    });
 });

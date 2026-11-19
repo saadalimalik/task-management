@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { apiRequest } from './api-client.server';
 
+const PROXY_SECRET = 'test-proxy-secret-of-at-least-32-chars';
 const fetchMock = vi.fn<typeof fetch>();
 
 const jsonResponse = (status: number, body: unknown) =>
@@ -29,7 +30,7 @@ describe('apiRequest', () => {
         expect(init).toMatchObject({ method: 'GET', headers: { accept: 'application/json' } });
     });
 
-    it('sends a JSON body and forwards the client address', async () => {
+    it('sends a JSON body and reports the client address with the shared secret', async () => {
         fetchMock.mockResolvedValue(jsonResponse(201, { data: { id: '1' } }));
 
         await apiRequest('/api/v1/tasks', {
@@ -38,11 +39,27 @@ describe('apiRequest', () => {
             clientIp: '203.0.113.9',
         });
 
-        expect(fetchMock.mock.calls[0]![1]).toMatchObject({
+        const init = fetchMock.mock.calls[0]![1]!;
+        expect(init).toMatchObject({
             method: 'POST',
             body: '{"title":"Write docs"}',
-            headers: { 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.9' },
+            headers: {
+                'content-type': 'application/json',
+                'x-client-ip': '203.0.113.9',
+                'x-proxy-secret': PROXY_SECRET,
+            },
         });
+        expect(init.headers).not.toHaveProperty('x-forwarded-for');
+    });
+
+    it('sends neither proxy header when the client address is unknown', async () => {
+        fetchMock.mockResolvedValue(jsonResponse(200, { data: [] }));
+
+        await apiRequest('/api/v1/tasks');
+
+        const headers = fetchMock.mock.calls[0]![1]!.headers;
+        expect(headers).not.toHaveProperty('x-client-ip');
+        expect(headers).not.toHaveProperty('x-proxy-secret');
     });
 
     it('returns undefined for 204', async () => {

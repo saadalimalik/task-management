@@ -12,6 +12,12 @@ const envSchema = z.object({
     // Number of reverse proxies in front of the API whose X-Forwarded-For is trusted.
     // Keep 0 when clients reach the API directly, or they could forge their address.
     TRUST_PROXY: z.coerce.number().int().min(0).default(0),
+    // Shared with the web app. A caller that presents it may say which end user it is calling
+    // for, so rate limits apply per user. Unset means every caller is judged by its own address.
+    INTERNAL_PROXY_SECRET: z.preprocess(
+        (value) => (value === '' ? undefined : value),
+        z.string().min(32).optional(),
+    ),
 });
 
 export type Env = z.infer<typeof envSchema>;

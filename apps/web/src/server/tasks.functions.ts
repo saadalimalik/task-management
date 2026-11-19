@@ -9,7 +9,11 @@ import {
     updateTaskSchema,
 } from '~/validators/tasks.validator';
 
-const clientIp = () => getRequestIP({ xForwardedFor: true });
+// The socket address, never the X-Forwarded-For header: the browser controls that header and
+// could forge an address per request to dodge the API's rate limiter.
+// ponytail: behind a reverse proxy every user shares the proxy's address. Read the address
+// from the proxy's own header then, and only when the request comes from that proxy.
+const clientIp = () => getRequestIP();
 
 export const listTasksFn = createServerFn({ method: 'GET' })
     .validator(tasksSearchSchema)

@@ -11,6 +11,7 @@ export default defineConfig({
         env: {
             API_URL: 'http://api.test',
             SITE_URL: 'https://tasks.test',
+            INTERNAL_PROXY_SECRET: 'test-proxy-secret-of-at-least-32-chars',
         },
     },
 });

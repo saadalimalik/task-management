@@ -40,7 +40,6 @@ services:
         environment:
             NODE_ENV: production
             PORT: 3000
-            TRUST_PROXY: 1
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
         ports:
             - '${API_PORT}:3000'
